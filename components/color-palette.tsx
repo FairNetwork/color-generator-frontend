@@ -14,8 +14,8 @@ export function ColorPalette({ primaryColor }: ColorPaletteProps) {
     <div className="space-y-4">
       <div className="hidden items-center gap-4 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground md:grid md:grid-cols-[minmax(0,1.1fr)_repeat(2,minmax(0,1fr))]">
         <span className="text-left">Usage</span>
-        <span className="text-center">☀️ Light mode</span>
-        <span className="text-center">🌙 Dark mode</span>
+        <span className="text-left">Light mode</span>
+        <span className="text-left">Dark mode</span>
       </div>
 
       <div className="space-y-3">
