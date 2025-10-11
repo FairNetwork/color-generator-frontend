@@ -61,7 +61,7 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl">
+      <DialogContent className="max-h-[85vh] w-[calc(100vw-2rem)] overflow-y-auto sm:max-w-3xl sm:w-auto">
         <DialogHeader>
           <DialogTitle>Farben exportieren</DialogTitle>
           <DialogDescription>
@@ -119,7 +119,7 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
           </div>
 
           <div className="relative">
-            <pre className="max-h-96 overflow-auto rounded-lg bg-muted p-4 text-sm">
+            <pre className="max-h-[50vh] overflow-auto rounded-lg bg-muted p-4 text-sm sm:max-h-96">
               <code>{exportContent}</code>
             </pre>
             <Button size="sm" variant="secondary" className="absolute right-2 top-2 gap-2" onClick={handleCopy}>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { ColorCarousel } from "@/components/color-carousel"
 import { SavedColors } from "@/components/saved-colors"
 import { ColorTypeSelector } from "@/components/color-type-selector"
@@ -19,50 +19,70 @@ export default function ColorGeneratorPage() {
 
   const cycleDuration = 2000
 
+  const getNow = useCallback(() => (typeof performance !== "undefined" ? performance.now() : Date.now()), [])
+  const cycleStartRef = useRef<number>(getNow())
+  const pausedElapsedRef = useRef(0)
+  const rafRef = useRef<number | null>(null)
+
   const generateNextColor = useCallback(() => generateColorFromTypes(selectedTypes), [selectedTypes])
 
   // Generate initial color
   useEffect(() => {
-    setCurrentColor(generateNextColor())
-  }, [generateNextColor])
-
-  // Auto-advance carousel every 2 seconds
-  useEffect(() => {
-    if (isPaused) return
-
-    const interval = setInterval(() => {
-      setCurrentColor(generateNextColor())
-    }, cycleDuration)
-
-    return () => clearInterval(interval)
-  }, [generateNextColor, isPaused, cycleDuration])
-
-  // Animate progress towards next color
-  useEffect(() => {
-    if (isPaused) return
-
-    let animationFrame: number
-    let startTime: number | null = null
+    const nextColor = generateNextColor()
+    setCurrentColor(nextColor)
+    const now = getNow()
+    cycleStartRef.current = now
+    pausedElapsedRef.current = 0
     setProgress(0)
+  }, [generateNextColor, getNow])
 
-    const step = (timestamp: number) => {
-      if (startTime === null) {
-        startTime = timestamp
+  useEffect(() => {
+    if (isPaused) {
+      pausedElapsedRef.current = Math.min(cycleDuration, getNow() - cycleStartRef.current)
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
       }
-
-      const elapsed = timestamp - startTime
-      const percentage = Math.min(100, (elapsed / cycleDuration) * 100)
-      setProgress(percentage)
-
-      if (elapsed < cycleDuration) {
-        animationFrame = requestAnimationFrame(step)
-      }
+      return
     }
 
-    animationFrame = requestAnimationFrame(step)
+    const resumeElapsed = pausedElapsedRef.current
+    const startTime = getNow() - resumeElapsed
+    cycleStartRef.current = startTime
+    pausedElapsedRef.current = 0
 
-    return () => cancelAnimationFrame(animationFrame)
-  }, [currentColor, isPaused, cycleDuration])
+    const step = (timestamp: number) => {
+      const elapsed = timestamp - cycleStartRef.current
+
+      if (elapsed >= cycleDuration) {
+        setProgress(100)
+        const nextColor = generateNextColor()
+        setCurrentColor(nextColor)
+        cycleStartRef.current = timestamp
+        pausedElapsedRef.current = 0
+
+        rafRef.current = requestAnimationFrame((nextTimestamp) => {
+          cycleStartRef.current = nextTimestamp
+          setProgress(0)
+          step(nextTimestamp)
+        })
+        return
+      }
+
+      const percentage = Math.min(100, (elapsed / cycleDuration) * 100)
+      setProgress(percentage)
+      rafRef.current = requestAnimationFrame(step)
+    }
+
+    rafRef.current = requestAnimationFrame(step)
+
+    return () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
+    }
+  }, [generateNextColor, getNow, isPaused, cycleDuration])
 
   // Handle spacebar press to save color
   const handleKeyPress = useCallback(
