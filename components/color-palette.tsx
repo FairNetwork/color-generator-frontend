@@ -6,7 +6,7 @@ interface ColorPaletteProps {
   primaryColor: string
 }
 
-export function ColorPalette({ primaryColor }: ColorPaletteProps) {
+export const ColorPalette = ({ primaryColor }: ColorPaletteProps) => {
   const palette = generatePalette(primaryColor)
   const paletteKeys = PALETTE_FIELDS.filter((key) => key in palette.light)
 
@@ -42,13 +42,20 @@ interface ColorPreviewProps {
   label: string
 }
 
-function ColorPreview({ color, label }: ColorPreviewProps) {
+const ColorPreview = ({ color, label }: ColorPreviewProps) => {
   return (
     <div className="flex items-center gap-3 rounded-lg bg-background/70 px-3 py-2 shadow-sm sm:gap-4">
-      <div className="h-9 w-9 shrink-0 rounded-md border" style={{ backgroundColor: color }} />
+      <div
+        className="h-9 w-9 shrink-0 rounded-md border"
+        style={{ backgroundColor: color }}
+      />
       <div className="min-w-0">
-        <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</div>
-        <div className="font-mono text-xs text-foreground/80 break-all">{color}</div>
+        <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+          {label}
+        </div>
+        <div className="font-mono text-xs text-foreground/80 break-all">
+          {color}
+        </div>
       </div>
     </div>
   )

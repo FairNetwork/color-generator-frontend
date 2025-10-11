@@ -1,7 +1,13 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
@@ -14,9 +20,20 @@ interface ExportDialogProps {
   colors: string[]
 }
 
-type ExportFormat = "tailwind" | "css" | "json" | "scss" | "android" | "swiftui" | "figma"
+type ExportFormat =
+  | "tailwind"
+  | "css"
+  | "json"
+  | "scss"
+  | "android"
+  | "swiftui"
+  | "figma"
 
-export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) {
+export const ExportDialog = ({
+  open,
+  onOpenChange,
+  colors,
+}: ExportDialogProps) => {
   const [format, setFormat] = useState<ExportFormat>("tailwind")
   const [copied, setCopied] = useState(false)
 
@@ -67,13 +84,17 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
             <DialogHeader>
               <DialogTitle>Export colors</DialogTitle>
               <DialogDescription>
-                Choose how you want to export your palettes with light and dark variants.
+                Choose how you want to export your palettes with light and dark
+                variants.
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-3">
               <Label>Format</Label>
-              <RadioGroup value={format} onValueChange={(v) => setFormat(v as ExportFormat)}>
+              <RadioGroup
+                value={format}
+                onValueChange={(v) => setFormat(v as ExportFormat)}
+              >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="tailwind" id="tailwind" />
                   <Label htmlFor="tailwind" className="font-normal">
@@ -119,25 +140,30 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
               </RadioGroup>
             </div>
 
-              <div className="relative">
-                <div className="overflow-hidden rounded-xl bg-muted pr-[10px]">
-                  <pre className="modern-scrollbar max-h-[50vh] overflow-auto bg-transparent p-4 text-sm sm:max-h-96">
-                    <code className="block whitespace-pre">{exportContent}</code>
-                  </pre>
-                </div>
-                <Button size="sm" variant="secondary" className="absolute right-[20px] top-[10px] gap-2" onClick={handleCopy}>
-                  {copied ? (
-                    <>
-                      <Check className="h-4 w-4" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4" />
-                      Copy
-                    </>
-                  )}
-                </Button>
+            <div className="relative">
+              <div className="overflow-hidden rounded-xl bg-muted pr-[10px]">
+                <pre className="modern-scrollbar max-h-[50vh] overflow-auto bg-transparent p-4 text-sm sm:max-h-96">
+                  <code className="block whitespace-pre">{exportContent}</code>
+                </pre>
+              </div>
+              <Button
+                size="sm"
+                variant="secondary"
+                className="absolute right-[20px] top-[10px] gap-2"
+                onClick={handleCopy}
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Copied!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </div>
@@ -152,14 +178,17 @@ interface PaletteBundle {
   palettes: ReturnType<typeof generatePalette>
 }
 
-function generateTailwindConfig(palettes: PaletteBundle[]) {
-  const colors = palettes.reduce((acc, palette) => {
-    acc[palette.id] = {
-      light: palette.palettes.light,
-      dark: palette.palettes.dark,
-    }
-    return acc
-  }, {} as Record<string, unknown>)
+const generateTailwindConfig = (palettes: PaletteBundle[]) => {
+  const colors = palettes.reduce(
+    (acc, palette) => {
+      acc[palette.id] = {
+        light: palette.palettes.light,
+        dark: palette.palettes.dark,
+      }
+      return acc
+    },
+    {} as Record<string, unknown>,
+  )
 
   return `module.exports = {
   theme: {
@@ -170,7 +199,7 @@ function generateTailwindConfig(palettes: PaletteBundle[]) {
 }`
 }
 
-function generateCSS(palettes: PaletteBundle[]) {
+const generateCSS = (palettes: PaletteBundle[]) => {
   return palettes
     .map(
       (palette, index) => `
@@ -185,7 +214,7 @@ ${PALETTE_FIELDS.map((field) => `  --${palette.id}-${field}: ${palette.palettes.
     .join("\n")
 }
 
-function generateSCSS(palettes: PaletteBundle[]) {
+const generateSCSS = (palettes: PaletteBundle[]) => {
   return palettes
     .map(
       (palette, index) => `
@@ -196,7 +225,7 @@ ${PALETTE_FIELDS.map((field) => `$${palette.id}-dark-${field}: ${palette.palette
     .join("\n")
 }
 
-function generateJSON(palettes: PaletteBundle[]) {
+const generateJSON = (palettes: PaletteBundle[]) => {
   const formatted = palettes.map((palette) => ({
     id: palette.id,
     color: palette.color,
@@ -207,15 +236,17 @@ function generateJSON(palettes: PaletteBundle[]) {
   return JSON.stringify(formatted, null, 2)
 }
 
-function generateAndroidXml(palettes: PaletteBundle[]) {
+const generateAndroidXml = (palettes: PaletteBundle[]) => {
   const entries = palettes
     .map(
       (palette, index) => `  <!-- Palette ${index + 1} (${palette.color}) -->
 ${PALETTE_FIELDS.map(
-  (field) => `  <color name="${palette.id}_light_${field}">${palette.palettes.light[field]}</color>`,
+  (field) =>
+    `  <color name="${palette.id}_light_${field}">${palette.palettes.light[field]}</color>`,
 ).join("\n")}
 ${PALETTE_FIELDS.map(
-  (field) => `  <color name="${palette.id}_dark_${field}">${palette.palettes.dark[field]}</color>`,
+  (field) =>
+    `  <color name="${palette.id}_dark_${field}">${palette.palettes.dark[field]}</color>`,
 ).join("\n")}`,
     )
     .join("\n")
@@ -225,10 +256,11 @@ ${entries}
 </resources>`
 }
 
-function generateSwiftUI(palettes: PaletteBundle[]) {
-  return palettes
-    .map(
-      (palette, index) => `// Palette ${index + 1} (${palette.color})
+const generateSwiftUI = (palettes: PaletteBundle[]) => {
+  return (
+    palettes
+      .map(
+        (palette, index) => `// Palette ${index + 1} (${palette.color})
 struct ${camelCase(palette.id)}Palette {
     static let light = ThemePalette(
 ${PALETTE_FIELDS.map((field) => `        ${field}: "${palette.palettes.light[field]}",`).join("\n")}
@@ -238,16 +270,17 @@ ${PALETTE_FIELDS.map((field) => `        ${field}: "${palette.palettes.dark[fiel
     )
 }
 `,
-    )
-    .join("\n") +
+      )
+      .join("\n") +
     `
 struct ThemePalette {
 ${PALETTE_FIELDS.map((field) => `    let ${field}: String`).join("\n")}
 }
 `
+  )
 }
 
-function generateFigmaTokens(palettes: PaletteBundle[]) {
+const generateFigmaTokens = (palettes: PaletteBundle[]) => {
   const tokens = palettes.reduce<Record<string, unknown>>((acc, palette) => {
     acc[palette.id] = {
       type: "color",
@@ -263,7 +296,7 @@ function generateFigmaTokens(palettes: PaletteBundle[]) {
   return JSON.stringify(tokens, null, 2)
 }
 
-function camelCase(value: string) {
+const camelCase = (value: string) => {
   return value
     .split(/[-_]/)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
