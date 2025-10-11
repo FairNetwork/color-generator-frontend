@@ -1,6 +1,6 @@
 "use client"
 
-import { generatePalette } from "@/lib/palette-generator"
+import { PALETTE_FIELDS, generatePalette } from "@/lib/palette-generator"
 
 interface ColorPaletteProps {
   primaryColor: string
@@ -8,14 +8,12 @@ interface ColorPaletteProps {
 
 export function ColorPalette({ primaryColor }: ColorPaletteProps) {
   const palette = generatePalette(primaryColor)
-  const paletteKeys = Object.keys(palette.light) as Array<keyof typeof palette.light>
-
-  const formatLabel = (label: string) => label.replace(/([A-Z])/g, " $1").trim()
+  const paletteKeys = PALETTE_FIELDS.filter((key) => key in palette.light)
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-[minmax(0,1fr)_repeat(2,minmax(0,1.5fr))] items-center gap-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        <span className="text-left">Farbrolle</span>
+      <div className="hidden items-center gap-4 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground md:grid md:grid-cols-[minmax(0,1.1fr)_repeat(2,minmax(0,1fr))]">
+        <span className="text-left">Anwendung</span>
         <span className="text-center">☀️ Light Mode</span>
         <span className="text-center">🌙 Dark Mode</span>
       </div>
@@ -24,10 +22,10 @@ export function ColorPalette({ primaryColor }: ColorPaletteProps) {
         {paletteKeys.map((key) => (
           <div
             key={key}
-            className="grid grid-cols-[minmax(0,1fr)_repeat(2,minmax(0,1.5fr))] items-center gap-4 rounded-xl border bg-card/50 p-3"
+            className="flex flex-col gap-3 rounded-xl border bg-card/60 p-3 shadow-sm md:grid md:grid-cols-[minmax(0,1.1fr)_repeat(2,minmax(0,1fr))] md:items-center md:gap-4"
           >
-            <div className="text-xs font-semibold capitalize text-muted-foreground">
-              {formatLabel(key)}
+            <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground md:text-[11px]">
+              {paletteLabels[key]}
             </div>
 
             <ColorPreview color={palette.light[key]} label="Light" />
@@ -46,12 +44,27 @@ interface ColorPreviewProps {
 
 function ColorPreview({ color, label }: ColorPreviewProps) {
   return (
-    <div className="flex items-center gap-3 rounded-lg bg-background/70 px-3 py-2">
+    <div className="flex items-center gap-3 rounded-lg bg-background/70 px-3 py-2 shadow-sm sm:gap-4">
       <div className="h-9 w-9 shrink-0 rounded-md border" style={{ backgroundColor: color }} />
-      <div>
+      <div className="min-w-0">
         <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</div>
-        <div className="font-mono text-xs text-foreground/80">{color}</div>
+        <div className="font-mono text-xs text-foreground/80 break-all">{color}</div>
       </div>
     </div>
   )
+}
+
+const paletteLabels: Record<(typeof PALETTE_FIELDS)[number], string> = {
+  primary: "Primär",
+  secondary: "Sekundär",
+  accent: "Akzent",
+  background: "Hintergrund",
+  surface: "Fläche",
+  text: "Text",
+  headline: "Überschrift",
+  muted: "Muted",
+  border: "Rahmen",
+  success: "Erfolg",
+  warning: "Warnung",
+  danger: "Fehler",
 }

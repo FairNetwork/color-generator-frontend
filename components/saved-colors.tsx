@@ -33,9 +33,9 @@ export function SavedColors({ colors, onRemoveColor }: SavedColorsProps) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold">Gespeicherte Farben</h2>
-        <span className="text-sm text-muted-foreground">{colors.length} gespeichert</span>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+        <h2 className="text-2xl font-bold leading-tight sm:text-3xl">Gespeicherte Farben</h2>
+        <span className="text-sm text-muted-foreground sm:text-base">{colors.length} gespeichert</span>
       </div>
 
       {colors.length === 0 ? (
@@ -49,21 +49,21 @@ export function SavedColors({ colors, onRemoveColor }: SavedColorsProps) {
 
             return (
               <div key={color} className="rounded-xl border bg-card shadow-sm">
-                <div className="flex items-center gap-4 p-4">
+                <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:gap-5">
                   <button
                     type="button"
                     onClick={() => toggleColor(color)}
-                    className="flex flex-1 items-center gap-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+                    className="flex flex-1 flex-col gap-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:flex-row sm:items-center sm:gap-4"
                   >
                     <span className="h-12 w-12 shrink-0 rounded-full border" style={{ backgroundColor: color }} />
-                    <span className="flex-1 font-mono text-lg font-semibold">{color}</span>
+                    <span className="flex-1 font-mono text-base font-semibold leading-tight sm:text-lg">{color}</span>
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : "rotate-0"}`}
                       aria-hidden
                     />
                   </button>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-end gap-2 sm:justify-start">
                     <Button
                       variant="ghost"
                       size="icon"

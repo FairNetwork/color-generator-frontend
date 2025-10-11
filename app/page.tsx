@@ -109,8 +109,8 @@ export default function ColorGeneratorPage() {
   const timeRemaining = Math.max(0, cycleDuration * (1 - progress / 100))
 
   return (
-    <div className="min-h-screen bg-background p-6 md:p-12">
-      <div className="mx-auto max-w-7xl space-y-12">
+    <div className="min-h-screen bg-background p-4 sm:p-6 md:p-12">
+      <div className="mx-auto max-w-7xl space-y-10 sm:space-y-12">
         {/* Color Type Selector */}
         <ColorTypeSelector value={selectedTypes} onChange={setSelectedTypes} />
 

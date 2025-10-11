@@ -110,7 +110,11 @@ function generateEarthColor(): string {
   const r = base[0] + Math.floor(Math.random() * 40 - 20)
   const g = base[1] + Math.floor(Math.random() * 40 - 20)
   const b = base[2] + Math.floor(Math.random() * 40 - 20)
-  return rgbToHex(Math.max(0, Math.min(255, r)), Math.max(0, Math.min(255, g)), Math.max(0, Math.min(255, b)))
+  return rgbToHex(
+    Math.max(0, Math.min(255, r)),
+    Math.max(0, Math.min(255, g)),
+    Math.max(0, Math.min(255, b)),
+  )
 }
 
 function generateMutedColor(): string {
@@ -140,7 +144,13 @@ function generateMonochromeColor(): string {
 }
 
 function rgbToHex(r: number, g: number, b: number): string {
-  return "#" + [r, g, b].map((x) => x.toString(16).padStart(2, "0")).join("")
+  return (
+    "#" +
+    [r, g, b]
+      .map((x) => x.toString(16).padStart(2, "0"))
+      .join("")
+      .toUpperCase()
+  )
 }
 
 function hslToHex(h: number, s: number, l: number): string {
