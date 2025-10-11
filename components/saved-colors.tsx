@@ -34,13 +34,13 @@ export function SavedColors({ colors, onRemoveColor }: SavedColorsProps) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-        <h2 className="text-2xl font-bold leading-tight sm:text-3xl">Gespeicherte Farben</h2>
-        <span className="text-sm text-muted-foreground sm:text-base">{colors.length} gespeichert</span>
+        <h2 className="text-2xl font-bold leading-tight sm:text-3xl">Saved colors</h2>
+        <span className="text-sm text-muted-foreground sm:text-base">{colors.length} saved</span>
       </div>
 
       {colors.length === 0 ? (
         <p className="rounded-lg border border-dashed bg-muted/40 p-6 text-sm text-muted-foreground">
-          Noch keine Farben gespeichert. Drücke die Leertaste, um deine Lieblingsfarben zur Liste hinzuzufügen.
+          No colors saved yet. Press the spacebar or tap the color area on mobile to add your favorites to the list.
         </p>
       ) : (
         <div className="space-y-3">
@@ -71,7 +71,7 @@ export function SavedColors({ colors, onRemoveColor }: SavedColorsProps) {
                         event.stopPropagation()
                         handleExport(color)
                       }}
-                      aria-label="Palette herunterladen"
+                      aria-label="Download palette"
                     >
                       <Download className="h-4 w-4" />
                     </Button>
@@ -82,7 +82,7 @@ export function SavedColors({ colors, onRemoveColor }: SavedColorsProps) {
                         event.stopPropagation()
                         onRemoveColor(color)
                       }}
-                      aria-label="Farbe entfernen"
+                      aria-label="Remove color"
                     >
                       <X className="h-4 w-4" />
                     </Button>

@@ -31,7 +31,7 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
   )
 
   const exportContent = useMemo(() => {
-    if (paletteBundles.length === 0) return "Keine Palette ausgewählt."
+    if (paletteBundles.length === 0) return "No palette selected."
 
     switch (format) {
       case "tailwind":
@@ -65,9 +65,9 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
         <div className="modern-scrollbar max-h-[calc(85vh-3rem)] overflow-y-auto pr-1 -mr-[5px]">
           <div className="space-y-6">
             <DialogHeader>
-              <DialogTitle>Farben exportieren</DialogTitle>
+              <DialogTitle>Export colors</DialogTitle>
               <DialogDescription>
-                Wähle das gewünschte Format für den Export deiner Farbpaletten mit Light- und Dark-Varianten.
+                Choose how you want to export your palettes with light and dark variants.
               </DialogDescription>
             </DialogHeader>
 
@@ -95,7 +95,7 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="scss" id="scss" />
                   <Label htmlFor="scss" className="font-normal">
-                    SCSS Variablen
+                    SCSS variables
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -119,25 +119,25 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
               </RadioGroup>
             </div>
 
-            <div className="relative">
-              <div className="overflow-hidden rounded-xl bg-muted pr-[10px]">
-                <pre className="modern-scrollbar max-h-[50vh] overflow-auto bg-transparent p-4 text-sm sm:max-h-96">
-                  <code className="block whitespace-pre">{exportContent}</code>
-                </pre>
-              </div>
-              <Button size="sm" variant="secondary" className="absolute right-[20px] top-[10px] gap-2" onClick={handleCopy}>
-                {copied ? (
-                  <>
-                    <Check className="h-4 w-4" />
-                    Kopiert!
-                  </>
-                ) : (
-                  <>
-                    <Copy className="h-4 w-4" />
-                    Kopieren
-                  </>
-                )}
-              </Button>
+              <div className="relative">
+                <div className="overflow-hidden rounded-xl bg-muted pr-[10px]">
+                  <pre className="modern-scrollbar max-h-[50vh] overflow-auto bg-transparent p-4 text-sm sm:max-h-96">
+                    <code className="block whitespace-pre">{exportContent}</code>
+                  </pre>
+                </div>
+                <Button size="sm" variant="secondary" className="absolute right-[20px] top-[10px] gap-2" onClick={handleCopy}>
+                  {copied ? (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="h-4 w-4" />
+                      Copy
+                    </>
+                  )}
+                </Button>
             </div>
           </div>
         </div>

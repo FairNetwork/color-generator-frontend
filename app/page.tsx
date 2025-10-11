@@ -9,6 +9,9 @@ import {
   generateColorFromTypes,
   type ColorType,
 } from "@/lib/color-generator"
+import { Slider } from "@/components/ui/slider"
+import { Label } from "@/components/ui/label"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export default function ColorGeneratorPage() {
   const [selectedTypes, setSelectedTypes] = useState<ColorType[]>([...ALL_COLOR_TYPES])
@@ -16,8 +19,9 @@ export default function ColorGeneratorPage() {
   const [savedColors, setSavedColors] = useState<string[]>([])
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [cycleDuration, setCycleDuration] = useState(4000)
 
-  const cycleDuration = 4000
+  const isMobile = useIsMobile()
 
   const getNow = useCallback(() => (typeof performance !== "undefined" ? performance.now() : Date.now()), [])
   const cycleStartRef = useRef<number>(getNow())
@@ -25,6 +29,16 @@ export default function ColorGeneratorPage() {
   const rafRef = useRef<number | null>(null)
 
   const generateNextColor = useCallback(() => generateColorFromTypes(selectedTypes), [selectedTypes])
+
+  const saveCurrentColor = useCallback(() => {
+    if (!currentColor) return
+    setSavedColors((prev) => {
+      if (prev.includes(currentColor)) {
+        return prev
+      }
+      return [...prev, currentColor]
+    })
+  }, [currentColor])
 
   // Generate initial color
   useEffect(() => {
@@ -87,14 +101,12 @@ export default function ColorGeneratorPage() {
   // Handle spacebar press to save color
   const handleKeyPress = useCallback(
     (e: KeyboardEvent) => {
-      if (e.code === "Space" && currentColor) {
+      if (e.code === "Space") {
         e.preventDefault()
-        if (!savedColors.includes(currentColor)) {
-          setSavedColors((prev) => [...prev, currentColor])
-        }
+        saveCurrentColor()
       }
     },
-    [currentColor, savedColors],
+    [saveCurrentColor],
   )
 
   useEffect(() => {
@@ -106,6 +118,23 @@ export default function ColorGeneratorPage() {
     setSavedColors((prev) => prev.filter((c) => c !== color))
   }
 
+  const handleCycleDurationChange = useCallback(
+    (nextSeconds: number[]) => {
+      const seconds = nextSeconds[0]
+      const newDuration = seconds * 1000
+      const now = getNow()
+      const progressRatio = progress / 100
+      cycleStartRef.current = now - progressRatio * newDuration
+      if (isPaused) {
+        pausedElapsedRef.current = Math.min(newDuration, now - cycleStartRef.current)
+      } else {
+        pausedElapsedRef.current = 0
+      }
+      setCycleDuration(newDuration)
+    },
+    [getNow, isPaused, progress],
+  )
+
   const timeRemaining = Math.max(0, cycleDuration * (1 - progress / 100))
 
   return (
@@ -114,6 +143,20 @@ export default function ColorGeneratorPage() {
         {/* Color Type Selector */}
         <ColorTypeSelector value={selectedTypes} onChange={setSelectedTypes} />
 
+        <div className="space-y-3">
+          <Label htmlFor="interval-slider" className="text-base font-medium">
+            Color change interval: {(cycleDuration / 1000).toFixed(1)}s
+          </Label>
+          <Slider
+            id="interval-slider"
+            min={1}
+            max={10}
+            step={0.5}
+            value={[cycleDuration / 1000]}
+            onValueChange={handleCycleDurationChange}
+          />
+        </div>
+
         {/* Color Carousel */}
         <ColorCarousel
           color={currentColor}
@@ -121,6 +164,8 @@ export default function ColorGeneratorPage() {
           onPauseToggle={() => setIsPaused(!isPaused)}
           progress={progress}
           timeRemaining={timeRemaining}
+          onSaveColor={saveCurrentColor}
+          isMobile={isMobile}
         />
 
         {/* Saved Colors */}
