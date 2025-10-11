@@ -13,9 +13,9 @@ export function ColorPalette({ primaryColor }: ColorPaletteProps) {
   return (
     <div className="space-y-4">
       <div className="hidden items-center gap-4 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground md:grid md:grid-cols-[minmax(0,1.1fr)_repeat(2,minmax(0,1fr))]">
-        <span className="text-left">Anwendung</span>
-        <span className="text-center">☀️ Light Mode</span>
-        <span className="text-center">🌙 Dark Mode</span>
+        <span className="text-left">Usage</span>
+        <span className="text-center">☀️ Light mode</span>
+        <span className="text-center">🌙 Dark mode</span>
       </div>
 
       <div className="space-y-3">
@@ -55,16 +55,16 @@ function ColorPreview({ color, label }: ColorPreviewProps) {
 }
 
 const paletteLabels: Record<(typeof PALETTE_FIELDS)[number], string> = {
-  primary: "Primär",
-  secondary: "Sekundär",
-  accent: "Akzent",
-  background: "Hintergrund",
-  surface: "Fläche",
+  primary: "Primary",
+  secondary: "Secondary",
+  accent: "Accent",
+  background: "Background",
+  surface: "Surface",
   text: "Text",
-  headline: "Überschrift",
+  headline: "Headline",
   muted: "Muted",
-  border: "Rahmen",
-  success: "Erfolg",
-  warning: "Warnung",
-  danger: "Fehler",
+  border: "Border",
+  success: "Success",
+  warning: "Warning",
+  danger: "Danger",
 }

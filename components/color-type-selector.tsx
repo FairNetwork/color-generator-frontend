@@ -9,16 +9,16 @@ interface ColorTypeSelectorProps {
 }
 
 const colorTypes: { value: ColorType; label: string }[] = [
-  { value: "pastel", label: "Pastell" },
-  { value: "vibrant", label: "Lebendig" },
-  { value: "dark", label: "Dunkel" },
-  { value: "light", label: "Hell" },
+  { value: "pastel", label: "Pastel" },
+  { value: "vibrant", label: "Vibrant" },
+  { value: "dark", label: "Dark" },
+  { value: "light", label: "Light" },
   { value: "neon", label: "Neon" },
-  { value: "earth", label: "Erdtöne" },
-  { value: "muted", label: "Gedämpft" },
+  { value: "earth", label: "Earthy" },
+  { value: "muted", label: "Muted" },
   { value: "warm", label: "Warm" },
-  { value: "cool", label: "Kühl" },
-  { value: "monochrome", label: "Monochrom" },
+  { value: "cool", label: "Cool" },
+  { value: "monochrome", label: "Monochrome" },
 ]
 
 export function ColorTypeSelector({ value, onChange }: ColorTypeSelectorProps) {
@@ -54,7 +54,7 @@ export function ColorTypeSelector({ value, onChange }: ColorTypeSelectorProps) {
         onClick={() => onChange([...ALL_COLOR_TYPES])}
         className="font-medium"
       >
-        Alle
+        All
       </Button>
       {colorTypes.map((type) => (
         <Button
