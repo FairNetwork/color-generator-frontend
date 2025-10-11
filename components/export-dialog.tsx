@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { generatePalette } from "@/lib/palette-generator"
+import { PALETTE_FIELDS, generatePalette } from "@/lib/palette-generator"
 import { Copy, Check } from "lucide-react"
 
 interface ExportDialogProps {
@@ -176,20 +176,10 @@ function generateCSS(palettes: PaletteBundle[]) {
       (palette, index) => `
 /* Palette ${index + 1} (${palette.color}) */
 :root {
-  --${palette.id}-primary: ${palette.palettes.light.primary};
-  --${palette.id}-secondary: ${palette.palettes.light.secondary};
-  --${palette.id}-text: ${palette.palettes.light.text};
-  --${palette.id}-background: ${palette.palettes.light.background};
-  --${palette.id}-headline: ${palette.palettes.light.headline};
-  --${palette.id}-accent: ${palette.palettes.light.accent};
+${PALETTE_FIELDS.map((field) => `  --${palette.id}-${field}: ${palette.palettes.light[field]};`).join("\n")}
 }
 [data-theme="dark"] {
-  --${palette.id}-primary: ${palette.palettes.dark.primary};
-  --${palette.id}-secondary: ${palette.palettes.dark.secondary};
-  --${palette.id}-text: ${palette.palettes.dark.text};
-  --${palette.id}-background: ${palette.palettes.dark.background};
-  --${palette.id}-headline: ${palette.palettes.dark.headline};
-  --${palette.id}-accent: ${palette.palettes.dark.accent};
+${PALETTE_FIELDS.map((field) => `  --${palette.id}-${field}: ${palette.palettes.dark[field]};`).join("\n")}
 }`,
     )
     .join("\n")
@@ -200,18 +190,8 @@ function generateSCSS(palettes: PaletteBundle[]) {
     .map(
       (palette, index) => `
 // Palette ${index + 1} (${palette.color})
-$${palette.id}-light-primary: ${palette.palettes.light.primary};
-$${palette.id}-light-secondary: ${palette.palettes.light.secondary};
-$${palette.id}-light-text: ${palette.palettes.light.text};
-$${palette.id}-light-background: ${palette.palettes.light.background};
-$${palette.id}-light-headline: ${palette.palettes.light.headline};
-$${palette.id}-light-accent: ${palette.palettes.light.accent};
-$${palette.id}-dark-primary: ${palette.palettes.dark.primary};
-$${palette.id}-dark-secondary: ${palette.palettes.dark.secondary};
-$${palette.id}-dark-text: ${palette.palettes.dark.text};
-$${palette.id}-dark-background: ${palette.palettes.dark.background};
-$${palette.id}-dark-headline: ${palette.palettes.dark.headline};
-$${palette.id}-dark-accent: ${palette.palettes.dark.accent};`,
+${PALETTE_FIELDS.map((field) => `$${palette.id}-light-${field}: ${palette.palettes.light[field]};`).join("\n")}
+${PALETTE_FIELDS.map((field) => `$${palette.id}-dark-${field}: ${palette.palettes.dark[field]};`).join("\n")}`,
     )
     .join("\n")
 }
@@ -231,18 +211,12 @@ function generateAndroidXml(palettes: PaletteBundle[]) {
   const entries = palettes
     .map(
       (palette, index) => `  <!-- Palette ${index + 1} (${palette.color}) -->
-  <color name="${palette.id}_light_primary">${palette.palettes.light.primary}</color>
-  <color name="${palette.id}_light_secondary">${palette.palettes.light.secondary}</color>
-  <color name="${palette.id}_light_text">${palette.palettes.light.text}</color>
-  <color name="${palette.id}_light_background">${palette.palettes.light.background}</color>
-  <color name="${palette.id}_light_headline">${palette.palettes.light.headline}</color>
-  <color name="${palette.id}_light_accent">${palette.palettes.light.accent}</color>
-  <color name="${palette.id}_dark_primary">${palette.palettes.dark.primary}</color>
-  <color name="${palette.id}_dark_secondary">${palette.palettes.dark.secondary}</color>
-  <color name="${palette.id}_dark_text">${palette.palettes.dark.text}</color>
-  <color name="${palette.id}_dark_background">${palette.palettes.dark.background}</color>
-  <color name="${palette.id}_dark_headline">${palette.palettes.dark.headline}</color>
-  <color name="${palette.id}_dark_accent">${palette.palettes.dark.accent}</color>`,
+${PALETTE_FIELDS.map(
+  (field) => `  <color name="${palette.id}_light_${field}">${palette.palettes.light[field]}</color>`,
+).join("\n")}
+${PALETTE_FIELDS.map(
+  (field) => `  <color name="${palette.id}_dark_${field}">${palette.palettes.dark[field]}</color>`,
+).join("\n")}`,
     )
     .join("\n")
 
@@ -257,20 +231,10 @@ function generateSwiftUI(palettes: PaletteBundle[]) {
       (palette, index) => `// Palette ${index + 1} (${palette.color})
 struct ${camelCase(palette.id)}Palette {
     static let light = ThemePalette(
-        primary: "${palette.palettes.light.primary}",
-        secondary: "${palette.palettes.light.secondary}",
-        text: "${palette.palettes.light.text}",
-        background: "${palette.palettes.light.background}",
-        headline: "${palette.palettes.light.headline}",
-        accent: "${palette.palettes.light.accent}"
+${PALETTE_FIELDS.map((field) => `        ${field}: "${palette.palettes.light[field]}",`).join("\n")}
     )
     static let dark = ThemePalette(
-        primary: "${palette.palettes.dark.primary}",
-        secondary: "${palette.palettes.dark.secondary}",
-        text: "${palette.palettes.dark.text}",
-        background: "${palette.palettes.dark.background}",
-        headline: "${palette.palettes.dark.headline}",
-        accent: "${palette.palettes.dark.accent}"
+${PALETTE_FIELDS.map((field) => `        ${field}: "${palette.palettes.dark[field]}",`).join("\n")}
     )
 }
 `,
@@ -278,12 +242,7 @@ struct ${camelCase(palette.id)}Palette {
     .join("\n") +
     `
 struct ThemePalette {
-    let primary: String
-    let secondary: String
-    let text: String
-    let background: String
-    let headline: String
-    let accent: String
+${PALETTE_FIELDS.map((field) => `    let ${field}: String`).join("\n")}
 }
 `
 }
