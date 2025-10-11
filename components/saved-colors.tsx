@@ -11,7 +11,7 @@ interface SavedColorsProps {
   onRemoveColor: (color: string) => void
 }
 
-export function SavedColors({ colors, onRemoveColor }: SavedColorsProps) {
+export const SavedColors = ({ colors, onRemoveColor }: SavedColorsProps) => {
   const [expandedColors, setExpandedColors] = useState<string[]>([])
   const [exportTarget, setExportTarget] = useState<string | null>(null)
 
@@ -34,13 +34,18 @@ export function SavedColors({ colors, onRemoveColor }: SavedColorsProps) {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-        <h2 className="text-2xl font-bold leading-tight sm:text-3xl">Saved colors</h2>
-        <span className="text-sm text-muted-foreground sm:text-base">{colors.length} saved</span>
+        <h2 className="text-2xl font-bold leading-tight sm:text-3xl">
+          Saved colors
+        </h2>
+        <span className="text-sm text-muted-foreground sm:text-base">
+          {colors.length} saved
+        </span>
       </div>
 
       {colors.length === 0 ? (
         <p className="rounded-lg border border-dashed bg-muted/40 p-6 text-sm text-muted-foreground">
-          No colors saved yet. Press the spacebar or tap the color area on mobile to add your favorites to the list.
+          No colors saved yet. Press the spacebar or tap the color area on
+          mobile to add your favorites to the list.
         </p>
       ) : (
         <div className="space-y-3">
@@ -55,8 +60,13 @@ export function SavedColors({ colors, onRemoveColor }: SavedColorsProps) {
                     onClick={() => toggleColor(color)}
                     className="flex flex-1 flex-col gap-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 sm:flex-row sm:items-center sm:gap-4"
                   >
-                    <span className="h-12 w-12 shrink-0 rounded-full border" style={{ backgroundColor: color }} />
-                    <span className="flex-1 font-mono text-base font-semibold leading-tight sm:text-lg">{color}</span>
+                    <span
+                      className="h-12 w-12 shrink-0 rounded-full border"
+                      style={{ backgroundColor: color }}
+                    />
+                    <span className="flex-1 font-mono text-base font-semibold leading-tight sm:text-lg">
+                      {color}
+                    </span>
                     <ChevronDown
                       className={`h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : "rotate-0"}`}
                       aria-hidden

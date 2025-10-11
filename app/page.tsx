@@ -13,8 +13,10 @@ import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { useIsMobile } from "@/hooks/use-mobile"
 
-export default function ColorGeneratorPage() {
-  const [selectedTypes, setSelectedTypes] = useState<ColorType[]>([...ALL_COLOR_TYPES])
+const ColorGeneratorPage = () => {
+  const [selectedTypes, setSelectedTypes] = useState<ColorType[]>([
+    ...ALL_COLOR_TYPES,
+  ])
   const [currentColor, setCurrentColor] = useState("")
   const [savedColors, setSavedColors] = useState<string[]>([])
   const [isPaused, setIsPaused] = useState(false)
@@ -23,12 +25,18 @@ export default function ColorGeneratorPage() {
 
   const isMobile = useIsMobile()
 
-  const getNow = useCallback(() => (typeof performance !== "undefined" ? performance.now() : Date.now()), [])
+  const getNow = useCallback(
+    () => (typeof performance !== "undefined" ? performance.now() : Date.now()),
+    [],
+  )
   const cycleStartRef = useRef<number>(getNow())
   const pausedElapsedRef = useRef(0)
   const rafRef = useRef<number | null>(null)
 
-  const generateNextColor = useCallback(() => generateColorFromTypes(selectedTypes), [selectedTypes])
+  const generateNextColor = useCallback(
+    () => generateColorFromTypes(selectedTypes),
+    [selectedTypes],
+  )
 
   const saveCurrentColor = useCallback(() => {
     if (!currentColor) return
@@ -52,7 +60,10 @@ export default function ColorGeneratorPage() {
 
   useEffect(() => {
     if (isPaused) {
-      pausedElapsedRef.current = Math.min(cycleDuration, getNow() - cycleStartRef.current)
+      pausedElapsedRef.current = Math.min(
+        cycleDuration,
+        getNow() - cycleStartRef.current,
+      )
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current)
         rafRef.current = null
@@ -126,7 +137,10 @@ export default function ColorGeneratorPage() {
       const progressRatio = progress / 100
       cycleStartRef.current = now - progressRatio * newDuration
       if (isPaused) {
-        pausedElapsedRef.current = Math.min(newDuration, now - cycleStartRef.current)
+        pausedElapsedRef.current = Math.min(
+          newDuration,
+          now - cycleStartRef.current,
+        )
       } else {
         pausedElapsedRef.current = 0
       }
@@ -174,3 +188,5 @@ export default function ColorGeneratorPage() {
     </div>
   )
 }
+
+export default ColorGeneratorPage

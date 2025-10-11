@@ -21,7 +21,10 @@ const colorTypes: { value: ColorType; label: string }[] = [
   { value: "monochrome", label: "Monochrome" },
 ]
 
-export function ColorTypeSelector({ value, onChange }: ColorTypeSelectorProps) {
+export const ColorTypeSelector = ({
+  value,
+  onChange,
+}: ColorTypeSelectorProps) => {
   const isAllSelected = value.length === ALL_COLOR_TYPES.length
 
   const toggleType = (type: ColorType) => {
@@ -31,7 +34,9 @@ export function ColorTypeSelector({ value, onChange }: ColorTypeSelectorProps) {
     }
 
     const isSelected = value.includes(type)
-    const nextTypes = isSelected ? value.filter((t) => t !== type) : [...value, type]
+    const nextTypes = isSelected
+      ? value.filter((t) => t !== type)
+      : [...value, type]
 
     if (nextTypes.length === 0) {
       onChange([...ALL_COLOR_TYPES])
@@ -43,7 +48,9 @@ export function ColorTypeSelector({ value, onChange }: ColorTypeSelectorProps) {
       return
     }
 
-    const orderedTypes = ALL_COLOR_TYPES.filter((availableType) => nextTypes.includes(availableType))
+    const orderedTypes = ALL_COLOR_TYPES.filter((availableType) =>
+      nextTypes.includes(availableType),
+    )
     onChange(orderedTypes)
   }
 
@@ -59,7 +66,9 @@ export function ColorTypeSelector({ value, onChange }: ColorTypeSelectorProps) {
       {colorTypes.map((type) => (
         <Button
           key={type.value}
-          variant={!isAllSelected && value.includes(type.value) ? "default" : "outline"}
+          variant={
+            !isAllSelected && value.includes(type.value) ? "default" : "outline"
+          }
           onClick={() => toggleType(type.value)}
           className="font-medium"
         >
