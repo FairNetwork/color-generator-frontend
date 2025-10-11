@@ -61,80 +61,84 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] w-[calc(100vw-2rem)] overflow-y-auto sm:max-w-3xl sm:w-auto">
-        <DialogHeader>
-          <DialogTitle>Farben exportieren</DialogTitle>
-          <DialogDescription>
-            Wähle das gewünschte Format für den Export deiner Farbpaletten mit Light- und Dark-Varianten.
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="max-h-[85vh] overflow-hidden sm:max-w-3xl">
+        <div className="modern-scrollbar max-h-[calc(85vh-3rem)] overflow-y-auto pr-1">
+          <div className="space-y-6">
+            <DialogHeader>
+              <DialogTitle>Farben exportieren</DialogTitle>
+              <DialogDescription>
+                Wähle das gewünschte Format für den Export deiner Farbpaletten mit Light- und Dark-Varianten.
+              </DialogDescription>
+            </DialogHeader>
 
-        <div className="space-y-6">
-          <div className="space-y-3">
-            <Label>Format</Label>
-            <RadioGroup value={format} onValueChange={(v) => setFormat(v as ExportFormat)}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="tailwind" id="tailwind" />
-                <Label htmlFor="tailwind" className="font-normal">
-                  Tailwind Config
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="css" id="css" />
-                <Label htmlFor="css" className="font-normal">
-                  CSS Custom Properties
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="json" id="json" />
-                <Label htmlFor="json" className="font-normal">
-                  JSON
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="scss" id="scss" />
-                <Label htmlFor="scss" className="font-normal">
-                  SCSS Variablen
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="android" id="android" />
-                <Label htmlFor="android" className="font-normal">
-                  Android XML
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="swiftui" id="swiftui" />
-                <Label htmlFor="swiftui" className="font-normal">
-                  SwiftUI Palette
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="figma" id="figma" />
-                <Label htmlFor="figma" className="font-normal">
-                  Figma Tokens
-                </Label>
-              </div>
-            </RadioGroup>
-          </div>
+            <div className="space-y-3">
+              <Label>Format</Label>
+              <RadioGroup value={format} onValueChange={(v) => setFormat(v as ExportFormat)}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="tailwind" id="tailwind" />
+                  <Label htmlFor="tailwind" className="font-normal">
+                    Tailwind Config
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="css" id="css" />
+                  <Label htmlFor="css" className="font-normal">
+                    CSS Custom Properties
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="json" id="json" />
+                  <Label htmlFor="json" className="font-normal">
+                    JSON
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="scss" id="scss" />
+                  <Label htmlFor="scss" className="font-normal">
+                    SCSS Variablen
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="android" id="android" />
+                  <Label htmlFor="android" className="font-normal">
+                    Android XML
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="swiftui" id="swiftui" />
+                  <Label htmlFor="swiftui" className="font-normal">
+                    SwiftUI Palette
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="figma" id="figma" />
+                  <Label htmlFor="figma" className="font-normal">
+                    Figma Tokens
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
 
-          <div className="relative">
-            <pre className="max-h-[50vh] overflow-auto rounded-lg bg-muted p-4 text-sm sm:max-h-96">
-              <code>{exportContent}</code>
-            </pre>
-            <Button size="sm" variant="secondary" className="absolute right-2 top-2 gap-2" onClick={handleCopy}>
-              {copied ? (
-                <>
-                  <Check className="h-4 w-4" />
-                  Kopiert!
-                </>
-              ) : (
-                <>
-                  <Copy className="h-4 w-4" />
-                  Kopieren
-                </>
-              )}
-            </Button>
+            <div className="relative">
+              <div className="overflow-hidden rounded-xl bg-muted">
+                <pre className="modern-scrollbar max-h-[50vh] overflow-auto bg-transparent p-4 text-sm sm:max-h-96">
+                  <code className="block whitespace-pre">{exportContent}</code>
+                </pre>
+              </div>
+              <Button size="sm" variant="secondary" className="absolute right-6 top-6 gap-2" onClick={handleCopy}>
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Kopiert!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Kopieren
+                  </>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
