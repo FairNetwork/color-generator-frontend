@@ -7,7 +7,19 @@ export interface ColorPalette {
   accent: string
 }
 
-export function generatePalette(primaryColor: string, mode: "light" | "dark"): ColorPalette {
+export interface DualPalette {
+  light: ColorPalette
+  dark: ColorPalette
+}
+
+export function generatePalette(primaryColor: string): DualPalette {
+  return {
+    light: generatePaletteForMode(primaryColor, "light"),
+    dark: generatePaletteForMode(primaryColor, "dark"),
+  }
+}
+
+function generatePaletteForMode(primaryColor: string, mode: "light" | "dark"): ColorPalette {
   const rgb = hexToRgb(primaryColor)
   if (!rgb) return getDefaultPalette(mode)
 
@@ -22,15 +34,15 @@ export function generatePalette(primaryColor: string, mode: "light" | "dark"): C
       headline: "#0a0a0a",
       accent: adjustColor(r, g, b, -0.2, 0.3),
     }
-  } else {
-    return {
-      primary: primaryColor,
-      secondary: adjustColor(r, g, b, -0.3, -0.2),
-      text: "#e5e5e5",
-      background: "#0a0a0a",
-      headline: "#ffffff",
-      accent: adjustColor(r, g, b, 0.2, 0.3),
-    }
+  }
+
+  return {
+    primary: primaryColor,
+    secondary: adjustColor(r, g, b, -0.3, -0.2),
+    text: "#e5e5e5",
+    background: "#0a0a0a",
+    headline: "#ffffff",
+    accent: adjustColor(r, g, b, 0.2, 0.3),
   }
 }
 
@@ -134,14 +146,14 @@ function getDefaultPalette(mode: "light" | "dark"): ColorPalette {
       headline: "#0a0a0a",
       accent: "#10b981",
     }
-  } else {
-    return {
-      primary: "#3b82f6",
-      secondary: "#8b5cf6",
-      text: "#e5e5e5",
-      background: "#0a0a0a",
-      headline: "#ffffff",
-      accent: "#10b981",
-    }
+  }
+
+  return {
+    primary: "#3b82f6",
+    secondary: "#8b5cf6",
+    text: "#e5e5e5",
+    background: "#0a0a0a",
+    headline: "#ffffff",
+    accent: "#10b981",
   }
 }

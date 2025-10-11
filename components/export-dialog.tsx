@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -14,32 +14,47 @@ interface ExportDialogProps {
   colors: string[]
 }
 
-type ExportFormat = "tailwind" | "css" | "json" | "scss"
+type ExportFormat = "tailwind" | "css" | "json" | "scss" | "android" | "swiftui" | "figma"
 
 export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) {
   const [format, setFormat] = useState<ExportFormat>("tailwind")
-  const [mode, setMode] = useState<"light" | "dark">("light")
   const [copied, setCopied] = useState(false)
 
-  const generateExport = () => {
-    const palettes = colors.map((color) => generatePalette(color, mode))
+  const paletteBundles = useMemo(
+    () =>
+      colors.map((color, index) => ({
+        id: `palette-${index + 1}`,
+        color,
+        palettes: generatePalette(color),
+      })),
+    [colors],
+  )
+
+  const exportContent = useMemo(() => {
+    if (paletteBundles.length === 0) return "Keine Palette ausgewählt."
 
     switch (format) {
       case "tailwind":
-        return generateTailwindConfig(palettes)
+        return generateTailwindConfig(paletteBundles)
       case "css":
-        return generateCSS(palettes)
+        return generateCSS(paletteBundles)
       case "json":
-        return JSON.stringify(palettes, null, 2)
+        return generateJSON(paletteBundles)
       case "scss":
-        return generateSCSS(palettes)
+        return generateSCSS(paletteBundles)
+      case "android":
+        return generateAndroidXml(paletteBundles)
+      case "swiftui":
+        return generateSwiftUI(paletteBundles)
+      case "figma":
+        return generateFigmaTokens(paletteBundles)
       default:
         return ""
     }
-  }
+  }, [format, paletteBundles])
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(generateExport())
+    await navigator.clipboard.writeText(exportContent)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -49,63 +64,63 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Farben exportieren</DialogTitle>
-          <DialogDescription>Wähle das gewünschte Format für den Export deiner Farbpaletten</DialogDescription>
+          <DialogDescription>
+            Wähle das gewünschte Format für den Export deiner Farbpaletten mit Light- und Dark-Varianten.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-3">
-              <Label>Format</Label>
-              <RadioGroup value={format} onValueChange={(v) => setFormat(v as ExportFormat)}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="tailwind" id="tailwind" />
-                  <Label htmlFor="tailwind" className="font-normal">
-                    Tailwind Config
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="css" id="css" />
-                  <Label htmlFor="css" className="font-normal">
-                    CSS Variables
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="json" id="json" />
-                  <Label htmlFor="json" className="font-normal">
-                    JSON
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="scss" id="scss" />
-                  <Label htmlFor="scss" className="font-normal">
-                    SCSS Variables
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            <div className="space-y-3">
-              <Label>Modus</Label>
-              <RadioGroup value={mode} onValueChange={(v) => setMode(v as "light" | "dark")}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="light" id="light" />
-                  <Label htmlFor="light" className="font-normal">
-                    ☀️ Light Mode
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="dark" id="dark" />
-                  <Label htmlFor="dark" className="font-normal">
-                    🌙 Dark Mode
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
+          <div className="space-y-3">
+            <Label>Format</Label>
+            <RadioGroup value={format} onValueChange={(v) => setFormat(v as ExportFormat)}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="tailwind" id="tailwind" />
+                <Label htmlFor="tailwind" className="font-normal">
+                  Tailwind Config
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="css" id="css" />
+                <Label htmlFor="css" className="font-normal">
+                  CSS Custom Properties
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="json" id="json" />
+                <Label htmlFor="json" className="font-normal">
+                  JSON
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="scss" id="scss" />
+                <Label htmlFor="scss" className="font-normal">
+                  SCSS Variablen
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="android" id="android" />
+                <Label htmlFor="android" className="font-normal">
+                  Android XML
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="swiftui" id="swiftui" />
+                <Label htmlFor="swiftui" className="font-normal">
+                  SwiftUI Palette
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="figma" id="figma" />
+                <Label htmlFor="figma" className="font-normal">
+                  Figma Tokens
+                </Label>
+              </div>
+            </RadioGroup>
           </div>
 
           <div className="relative">
             <pre className="max-h-96 overflow-auto rounded-lg bg-muted p-4 text-sm">
-              <code>{generateExport()}</code>
+              <code>{exportContent}</code>
             </pre>
             <Button size="sm" variant="secondary" className="absolute right-2 top-2 gap-2" onClick={handleCopy}>
               {copied ? (
@@ -127,18 +142,20 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
   )
 }
 
-function generateTailwindConfig(palettes: any[]) {
-  const colors = palettes.reduce((acc, palette, index) => {
-    acc[`palette-${index + 1}`] = {
-      primary: palette.primary,
-      secondary: palette.secondary,
-      text: palette.text,
-      background: palette.background,
-      headline: palette.headline,
-      accent: palette.accent,
+interface PaletteBundle {
+  id: string
+  color: string
+  palettes: ReturnType<typeof generatePalette>
+}
+
+function generateTailwindConfig(palettes: PaletteBundle[]) {
+  const colors = palettes.reduce((acc, palette) => {
+    acc[palette.id] = {
+      light: palette.palettes.light,
+      dark: palette.palettes.dark,
     }
     return acc
-  }, {} as any)
+  }, {} as Record<string, unknown>)
 
   return `module.exports = {
   theme: {
@@ -149,34 +166,143 @@ function generateTailwindConfig(palettes: any[]) {
 }`
 }
 
-function generateCSS(palettes: any[]) {
+function generateCSS(palettes: PaletteBundle[]) {
   return palettes
     .map(
       (palette, index) => `
-/* Palette ${index + 1} */
+/* Palette ${index + 1} (${palette.color}) */
 :root {
-  --palette-${index + 1}-primary: ${palette.primary};
-  --palette-${index + 1}-secondary: ${palette.secondary};
-  --palette-${index + 1}-text: ${palette.text};
-  --palette-${index + 1}-background: ${palette.background};
-  --palette-${index + 1}-headline: ${palette.headline};
-  --palette-${index + 1}-accent: ${palette.accent};
+  --${palette.id}-primary: ${palette.palettes.light.primary};
+  --${palette.id}-secondary: ${palette.palettes.light.secondary};
+  --${palette.id}-text: ${palette.palettes.light.text};
+  --${palette.id}-background: ${palette.palettes.light.background};
+  --${palette.id}-headline: ${palette.palettes.light.headline};
+  --${palette.id}-accent: ${palette.palettes.light.accent};
+}
+[data-theme="dark"] {
+  --${palette.id}-primary: ${palette.palettes.dark.primary};
+  --${palette.id}-secondary: ${palette.palettes.dark.secondary};
+  --${palette.id}-text: ${palette.palettes.dark.text};
+  --${palette.id}-background: ${palette.palettes.dark.background};
+  --${palette.id}-headline: ${palette.palettes.dark.headline};
+  --${palette.id}-accent: ${palette.palettes.dark.accent};
 }`,
     )
     .join("\n")
 }
 
-function generateSCSS(palettes: any[]) {
+function generateSCSS(palettes: PaletteBundle[]) {
   return palettes
     .map(
       (palette, index) => `
-// Palette ${index + 1}
-$palette-${index + 1}-primary: ${palette.primary};
-$palette-${index + 1}-secondary: ${palette.secondary};
-$palette-${index + 1}-text: ${palette.text};
-$palette-${index + 1}-background: ${palette.background};
-$palette-${index + 1}-headline: ${palette.headline};
-$palette-${index + 1}-accent: ${palette.accent};`,
+// Palette ${index + 1} (${palette.color})
+$${palette.id}-light-primary: ${palette.palettes.light.primary};
+$${palette.id}-light-secondary: ${palette.palettes.light.secondary};
+$${palette.id}-light-text: ${palette.palettes.light.text};
+$${palette.id}-light-background: ${palette.palettes.light.background};
+$${palette.id}-light-headline: ${palette.palettes.light.headline};
+$${palette.id}-light-accent: ${palette.palettes.light.accent};
+$${palette.id}-dark-primary: ${palette.palettes.dark.primary};
+$${palette.id}-dark-secondary: ${palette.palettes.dark.secondary};
+$${palette.id}-dark-text: ${palette.palettes.dark.text};
+$${palette.id}-dark-background: ${palette.palettes.dark.background};
+$${palette.id}-dark-headline: ${palette.palettes.dark.headline};
+$${palette.id}-dark-accent: ${palette.palettes.dark.accent};`,
     )
     .join("\n")
+}
+
+function generateJSON(palettes: PaletteBundle[]) {
+  const formatted = palettes.map((palette) => ({
+    id: palette.id,
+    color: palette.color,
+    light: palette.palettes.light,
+    dark: palette.palettes.dark,
+  }))
+
+  return JSON.stringify(formatted, null, 2)
+}
+
+function generateAndroidXml(palettes: PaletteBundle[]) {
+  const entries = palettes
+    .map(
+      (palette, index) => `  <!-- Palette ${index + 1} (${palette.color}) -->
+  <color name="${palette.id}_light_primary">${palette.palettes.light.primary}</color>
+  <color name="${palette.id}_light_secondary">${palette.palettes.light.secondary}</color>
+  <color name="${palette.id}_light_text">${palette.palettes.light.text}</color>
+  <color name="${palette.id}_light_background">${palette.palettes.light.background}</color>
+  <color name="${palette.id}_light_headline">${palette.palettes.light.headline}</color>
+  <color name="${palette.id}_light_accent">${palette.palettes.light.accent}</color>
+  <color name="${palette.id}_dark_primary">${palette.palettes.dark.primary}</color>
+  <color name="${palette.id}_dark_secondary">${palette.palettes.dark.secondary}</color>
+  <color name="${palette.id}_dark_text">${palette.palettes.dark.text}</color>
+  <color name="${palette.id}_dark_background">${palette.palettes.dark.background}</color>
+  <color name="${palette.id}_dark_headline">${palette.palettes.dark.headline}</color>
+  <color name="${palette.id}_dark_accent">${palette.palettes.dark.accent}</color>`,
+    )
+    .join("\n")
+
+  return `<resources>
+${entries}
+</resources>`
+}
+
+function generateSwiftUI(palettes: PaletteBundle[]) {
+  return palettes
+    .map(
+      (palette, index) => `// Palette ${index + 1} (${palette.color})
+struct ${camelCase(palette.id)}Palette {
+    static let light = ThemePalette(
+        primary: "${palette.palettes.light.primary}",
+        secondary: "${palette.palettes.light.secondary}",
+        text: "${palette.palettes.light.text}",
+        background: "${palette.palettes.light.background}",
+        headline: "${palette.palettes.light.headline}",
+        accent: "${palette.palettes.light.accent}"
+    )
+    static let dark = ThemePalette(
+        primary: "${palette.palettes.dark.primary}",
+        secondary: "${palette.palettes.dark.secondary}",
+        text: "${palette.palettes.dark.text}",
+        background: "${palette.palettes.dark.background}",
+        headline: "${palette.palettes.dark.headline}",
+        accent: "${palette.palettes.dark.accent}"
+    )
+}
+`,
+    )
+    .join("\n") +
+    `
+struct ThemePalette {
+    let primary: String
+    let secondary: String
+    let text: String
+    let background: String
+    let headline: String
+    let accent: String
+}
+`
+}
+
+function generateFigmaTokens(palettes: PaletteBundle[]) {
+  const tokens = palettes.reduce<Record<string, unknown>>((acc, palette) => {
+    acc[palette.id] = {
+      type: "color",
+      value: {
+        light: palette.palettes.light,
+        dark: palette.palettes.dark,
+      },
+      description: `Palette ${palette.color}`,
+    }
+    return acc
+  }, {})
+
+  return JSON.stringify(tokens, null, 2)
+}
+
+function camelCase(value: string) {
+  return value
+    .split(/[-_]/)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join("")
 }

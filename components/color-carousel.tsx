@@ -1,15 +1,20 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
 import { Pause, Play } from "lucide-react"
 
 interface ColorCarouselProps {
   color: string
   isPaused: boolean
   onPauseToggle: () => void
+  progress: number
+  timeRemaining: number
 }
 
-export function ColorCarousel({ color, isPaused, onPauseToggle }: ColorCarouselProps) {
+export function ColorCarousel({ color, isPaused, onPauseToggle, progress, timeRemaining }: ColorCarouselProps) {
+  const remainingSeconds = Math.max(0, timeRemaining / 1000)
+
   return (
     <div className="space-y-6">
       <div
@@ -30,6 +35,14 @@ export function ColorCarousel({ color, isPaused, onPauseToggle }: ColorCarouselP
         >
           {isPaused ? <Play className="h-5 w-5" /> : <Pause className="h-5 w-5" />}
         </Button>
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+          <span>Nächste Farbe</span>
+          <span>{isPaused ? "Pausiert" : `${remainingSeconds.toFixed(1)}s`}</span>
+        </div>
+        <Progress value={progress} />
       </div>
     </div>
   )

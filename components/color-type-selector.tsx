@@ -1,11 +1,11 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import type { ColorType } from "@/lib/color-generator"
+import { ALL_COLOR_TYPES, type ColorType } from "@/lib/color-generator"
 
 interface ColorTypeSelectorProps {
-  value: ColorType
-  onChange: (type: ColorType) => void
+  value: ColorType[]
+  onChange: (types: ColorType[]) => void
 }
 
 const colorTypes: { value: ColorType; label: string }[] = [
@@ -15,16 +15,47 @@ const colorTypes: { value: ColorType; label: string }[] = [
   { value: "light", label: "Hell" },
   { value: "neon", label: "Neon" },
   { value: "earth", label: "Erdtöne" },
+  { value: "muted", label: "Gedämpft" },
+  { value: "warm", label: "Warm" },
+  { value: "cool", label: "Kühl" },
+  { value: "monochrome", label: "Monochrom" },
 ]
 
 export function ColorTypeSelector({ value, onChange }: ColorTypeSelectorProps) {
+  const toggleType = (type: ColorType) => {
+    const isSelected = value.includes(type)
+    const nextTypes = isSelected ? value.filter((t) => t !== type) : [...value, type]
+
+    if (nextTypes.length === 0) {
+      onChange([type])
+      return
+    }
+
+    if (nextTypes.length === ALL_COLOR_TYPES.length) {
+      onChange([...ALL_COLOR_TYPES])
+      return
+    }
+
+    const orderedTypes = ALL_COLOR_TYPES.filter((availableType) => nextTypes.includes(availableType))
+    onChange(orderedTypes)
+  }
+
+  const isAllSelected = value.length === ALL_COLOR_TYPES.length
+
   return (
     <div className="flex flex-wrap gap-3">
+      <Button
+        variant={isAllSelected ? "default" : "outline"}
+        onClick={() => onChange([...ALL_COLOR_TYPES])}
+        className="font-medium"
+      >
+        Alle
+      </Button>
       {colorTypes.map((type) => (
         <Button
           key={type.value}
-          variant={value === type.value ? "default" : "outline"}
-          onClick={() => onChange(type.value)}
+          variant={value.includes(type.value) ? "default" : "outline"}
+          onClick={() => toggleType(type.value)}
           className="font-medium"
         >
           {type.label}
