@@ -123,3 +123,40 @@
     @apply bg-background text-foreground;
   }
 }
+
+.modern-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-gutter: stable both-edges;
+  scrollbar-color: color-mix(in srgb, var(--foreground) 35%, transparent)
+    transparent;
+}
+
+.modern-scrollbar:hover {
+  scrollbar-color: color-mix(in srgb, var(--foreground) 55%, transparent)
+    transparent;
+}
+
+.modern-scrollbar::-webkit-scrollbar {
+  width: 0.6rem;
+  height: 0.6rem;
+}
+
+.modern-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modern-scrollbar::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--foreground) 35%, transparent);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 150ms ease;
+}
+
+.modern-scrollbar:hover::-webkit-scrollbar-thumb {
+  background-color: color-mix(in srgb, var(--foreground) 55%, transparent);
+}
+
+.modern-scrollbar::-webkit-scrollbar-button {
+  display: none;
+}

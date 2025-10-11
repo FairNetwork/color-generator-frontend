@@ -17,7 +17,7 @@ export default function ColorGeneratorPage() {
   const [isPaused, setIsPaused] = useState(false)
   const [progress, setProgress] = useState(0)
 
-  const cycleDuration = 2000
+  const cycleDuration = 4000
 
   const getNow = useCallback(() => (typeof performance !== "undefined" ? performance.now() : Date.now()), [])
   const cycleStartRef = useRef<number>(getNow())
