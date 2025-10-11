@@ -62,7 +62,7 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] overflow-hidden sm:max-w-3xl">
-        <div className="modern-scrollbar max-h-[calc(85vh-3rem)] overflow-y-auto pr-1">
+        <div className="modern-scrollbar max-h-[calc(85vh-3rem)] overflow-y-auto pr-1 -mr-[5px]">
           <div className="space-y-6">
             <DialogHeader>
               <DialogTitle>Farben exportieren</DialogTitle>
@@ -120,12 +120,12 @@ export function ExportDialog({ open, onOpenChange, colors }: ExportDialogProps) 
             </div>
 
             <div className="relative">
-              <div className="overflow-hidden rounded-xl bg-muted">
+              <div className="overflow-hidden rounded-xl bg-muted pr-[10px]">
                 <pre className="modern-scrollbar max-h-[50vh] overflow-auto bg-transparent p-4 text-sm sm:max-h-96">
                   <code className="block whitespace-pre">{exportContent}</code>
                 </pre>
               </div>
-              <Button size="sm" variant="secondary" className="absolute right-6 top-6 gap-2" onClick={handleCopy}>
+              <Button size="sm" variant="secondary" className="absolute right-[20px] top-[10px] gap-2" onClick={handleCopy}>
                 {copied ? (
                   <>
                     <Check className="h-4 w-4" />
