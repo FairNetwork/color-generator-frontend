@@ -22,12 +22,19 @@ const colorTypes: { value: ColorType; label: string }[] = [
 ]
 
 export function ColorTypeSelector({ value, onChange }: ColorTypeSelectorProps) {
+  const isAllSelected = value.length === ALL_COLOR_TYPES.length
+
   const toggleType = (type: ColorType) => {
+    if (isAllSelected) {
+      onChange([type])
+      return
+    }
+
     const isSelected = value.includes(type)
     const nextTypes = isSelected ? value.filter((t) => t !== type) : [...value, type]
 
     if (nextTypes.length === 0) {
-      onChange([type])
+      onChange([...ALL_COLOR_TYPES])
       return
     }
 
@@ -39,8 +46,6 @@ export function ColorTypeSelector({ value, onChange }: ColorTypeSelectorProps) {
     const orderedTypes = ALL_COLOR_TYPES.filter((availableType) => nextTypes.includes(availableType))
     onChange(orderedTypes)
   }
-
-  const isAllSelected = value.length === ALL_COLOR_TYPES.length
 
   return (
     <div className="flex flex-wrap gap-3">
@@ -54,7 +59,7 @@ export function ColorTypeSelector({ value, onChange }: ColorTypeSelectorProps) {
       {colorTypes.map((type) => (
         <Button
           key={type.value}
-          variant={value.includes(type.value) ? "default" : "outline"}
+          variant={!isAllSelected && value.includes(type.value) ? "default" : "outline"}
           onClick={() => toggleType(type.value)}
           className="font-medium"
         >
