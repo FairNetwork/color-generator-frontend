@@ -58,6 +58,25 @@ const ColorGeneratorPage = () => {
     setProgress(0)
   }, [generateNextColor, getNow])
 
+    useEffect(() => {
+        const sendHeight = () => {
+            const height = document.documentElement.scrollHeight;
+            window.parent.postMessage({ type: "iframe-height", height }, "*");
+        };
+
+        sendHeight();
+
+        const ro = new ResizeObserver(sendHeight);
+        ro.observe(document.body);
+
+        window.addEventListener("load", sendHeight);
+
+        return () => {
+            window.removeEventListener("load", sendHeight);
+            ro.disconnect();
+        };
+    }, []);
+
   useEffect(() => {
     if (isPaused) {
       pausedElapsedRef.current = Math.min(
