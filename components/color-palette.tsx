@@ -1,21 +1,26 @@
 "use client"
 
 import { PALETTE_FIELDS, generatePalette } from "@/lib/palette-generator"
+import type { AppTranslations } from "@/lib/i18n"
 
 interface ColorPaletteProps {
   primaryColor: string
+  translations: AppTranslations["colorPalette"]
 }
 
-export const ColorPalette = ({ primaryColor }: ColorPaletteProps) => {
+export const ColorPalette = ({
+  primaryColor,
+  translations,
+}: ColorPaletteProps) => {
   const palette = generatePalette(primaryColor)
   const paletteKeys = PALETTE_FIELDS.filter((key) => key in palette.light)
 
   return (
     <div className="space-y-4">
       <div className="hidden items-center gap-4 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground md:grid md:grid-cols-[minmax(0,1.1fr)_repeat(2,minmax(0,1fr))]">
-        <span className="text-left">Usage</span>
-        <span className="text-left">Light mode</span>
-        <span className="text-left">Dark mode</span>
+        <span className="text-left">{translations.usage}</span>
+        <span className="text-left">{translations.lightMode}</span>
+        <span className="text-left">{translations.darkMode}</span>
       </div>
 
       <div className="space-y-3">
@@ -25,11 +30,14 @@ export const ColorPalette = ({ primaryColor }: ColorPaletteProps) => {
             className="flex flex-col gap-3 rounded-xl border bg-card/60 p-3 shadow-sm md:grid md:grid-cols-[minmax(0,1.1fr)_repeat(2,minmax(0,1fr))] md:items-center md:gap-4"
           >
             <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground md:text-[11px]">
-              {paletteLabels[key]}
+              {translations.labels[key] ?? paletteLabels[key]}
             </div>
 
-            <ColorPreview color={palette.light[key]} label="Light" />
-            <ColorPreview color={palette.dark[key]} label="Dark" />
+            <ColorPreview
+              color={palette.light[key]}
+              label={translations.light}
+            />
+            <ColorPreview color={palette.dark[key]} label={translations.dark} />
           </div>
         ))}
       </div>

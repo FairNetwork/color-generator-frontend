@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Pause, Play } from "lucide-react"
+import type { AppTranslations } from "@/lib/i18n"
 
 interface ColorCarouselProps {
   color: string
@@ -12,6 +13,7 @@ interface ColorCarouselProps {
   timeRemaining: number
   onSaveColor: () => void
   isMobile: boolean
+  translations: AppTranslations
 }
 
 export const ColorCarousel = ({
@@ -22,11 +24,12 @@ export const ColorCarousel = ({
   timeRemaining,
   onSaveColor,
   isMobile,
+  translations,
 }: ColorCarouselProps) => {
   const remainingSeconds = Math.max(0, timeRemaining / 1000)
   const instructionText = isMobile
-    ? "Tap the color area to save it"
-    : "Press the spacebar to save"
+    ? translations.instructions.mobile
+    : translations.instructions.desktop
 
   return (
     <div className="space-y-6">
@@ -72,9 +75,11 @@ export const ColorCarousel = ({
         <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-4 sm:px-6 sm:pb-6">
           <div className="rounded-2xl bg-black/35 p-3 shadow-lg backdrop-blur sm:p-4">
             <div className="flex items-center justify-between text-[11px] font-medium text-white/80 sm:text-xs">
-              <span>Next color</span>
+              <span>{translations.colorCarousel.nextColor}</span>
               <span>
-                {isPaused ? "Paused" : `${remainingSeconds.toFixed(1)}s`}
+                {isPaused
+                  ? translations.colorCarousel.paused
+                  : `${remainingSeconds.toFixed(1)}s`}
               </span>
             </div>
             <Progress
