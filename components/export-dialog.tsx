@@ -13,11 +13,13 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { PALETTE_FIELDS, generatePalette } from "@/lib/palette-generator"
 import { Copy, Check } from "lucide-react"
+import type { AppTranslations } from "@/lib/i18n"
 
 interface ExportDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   colors: string[]
+  translations: AppTranslations["exportDialog"]
 }
 
 type ExportFormat =
@@ -33,6 +35,7 @@ export const ExportDialog = ({
   open,
   onOpenChange,
   colors,
+  translations,
 }: ExportDialogProps) => {
   const [format, setFormat] = useState<ExportFormat>("tailwind")
   const [copied, setCopied] = useState(false)
@@ -48,7 +51,7 @@ export const ExportDialog = ({
   )
 
   const exportContent = useMemo(() => {
-    if (paletteBundles.length === 0) return "No palette selected."
+    if (paletteBundles.length === 0) return translations.noPalette
 
     switch (format) {
       case "tailwind":
@@ -68,7 +71,7 @@ export const ExportDialog = ({
       default:
         return ""
     }
-  }, [format, paletteBundles])
+  }, [format, paletteBundles, translations])
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(exportContent)
@@ -82,15 +85,12 @@ export const ExportDialog = ({
         <div className="modern-scrollbar max-h-[calc(85vh-3rem)] overflow-y-auto pr-1 -mr-[5px]">
           <div className="space-y-6">
             <DialogHeader>
-              <DialogTitle>Export colors</DialogTitle>
-              <DialogDescription>
-                Choose how you want to export your palettes with light and dark
-                variants.
-              </DialogDescription>
+              <DialogTitle>{translations.title}</DialogTitle>
+              <DialogDescription>{translations.description}</DialogDescription>
             </DialogHeader>
 
             <div className="space-y-3">
-              <Label>Format</Label>
+              <Label>{translations.formatLabel}</Label>
               <RadioGroup
                 value={format}
                 onValueChange={(v) => setFormat(v as ExportFormat)}
@@ -98,43 +98,43 @@ export const ExportDialog = ({
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="tailwind" id="tailwind" />
                   <Label htmlFor="tailwind" className="font-normal">
-                    Tailwind Config
+                    {translations.formats.tailwind}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="css" id="css" />
                   <Label htmlFor="css" className="font-normal">
-                    CSS Custom Properties
+                    {translations.formats.css}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="json" id="json" />
                   <Label htmlFor="json" className="font-normal">
-                    JSON
+                    {translations.formats.json}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="scss" id="scss" />
                   <Label htmlFor="scss" className="font-normal">
-                    SCSS variables
+                    {translations.formats.scss}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="android" id="android" />
                   <Label htmlFor="android" className="font-normal">
-                    Android XML
+                    {translations.formats.android}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="swiftui" id="swiftui" />
                   <Label htmlFor="swiftui" className="font-normal">
-                    SwiftUI Palette
+                    {translations.formats.swiftui}
                   </Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="figma" id="figma" />
                   <Label htmlFor="figma" className="font-normal">
-                    Figma Tokens
+                    {translations.formats.figma}
                   </Label>
                 </div>
               </RadioGroup>
@@ -155,12 +155,12 @@ export const ExportDialog = ({
                 {copied ? (
                   <>
                     <Check className="h-4 w-4" />
-                    Copied!
+                    {translations.copied}
                   </>
                 ) : (
                   <>
                     <Copy className="h-4 w-4" />
-                    Copy
+                    {translations.copy}
                   </>
                 )}
               </Button>
