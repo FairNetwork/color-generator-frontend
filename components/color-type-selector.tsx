@@ -2,10 +2,12 @@
 
 import { Button } from "@/components/ui/button"
 import { ALL_COLOR_TYPES, type ColorType } from "@/lib/color-generator"
+import type { AppTranslations } from "@/lib/i18n"
 
 interface ColorTypeSelectorProps {
   value: ColorType[]
   onChange: (types: ColorType[]) => void
+  translations: AppTranslations["colorTypes"]
 }
 
 const colorTypes: { value: ColorType; label: string }[] = [
@@ -24,6 +26,7 @@ const colorTypes: { value: ColorType; label: string }[] = [
 export const ColorTypeSelector = ({
   value,
   onChange,
+  translations,
 }: ColorTypeSelectorProps) => {
   const isAllSelected = value.length === ALL_COLOR_TYPES.length
 
@@ -61,7 +64,7 @@ export const ColorTypeSelector = ({
         onClick={() => onChange([...ALL_COLOR_TYPES])}
         className="font-medium"
       >
-        All
+        {translations.all}
       </Button>
       {colorTypes.map((type) => (
         <Button
@@ -72,7 +75,7 @@ export const ColorTypeSelector = ({
           onClick={() => toggleType(type.value)}
           className="font-medium"
         >
-          {type.label}
+          {translations.labels[type.value] ?? type.label}
         </Button>
       ))}
     </div>

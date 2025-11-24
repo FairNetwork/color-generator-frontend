@@ -5,13 +5,23 @@ import { Button } from "@/components/ui/button"
 import { ColorPalette } from "@/components/color-palette"
 import { ExportDialog } from "@/components/export-dialog"
 import { ChevronDown, Download, X } from "lucide-react"
+import type { AppTranslations } from "@/lib/i18n"
 
 interface SavedColorsProps {
   colors: string[]
   onRemoveColor: (color: string) => void
+  translations: AppTranslations["savedColors"]
+  paletteTranslations: AppTranslations["colorPalette"]
+  exportTranslations: AppTranslations["exportDialog"]
 }
 
-export const SavedColors = ({ colors, onRemoveColor }: SavedColorsProps) => {
+export const SavedColors = ({
+  colors,
+  onRemoveColor,
+  translations,
+  paletteTranslations,
+  exportTranslations,
+}: SavedColorsProps) => {
   const [expandedColors, setExpandedColors] = useState<string[]>([])
   const [exportTarget, setExportTarget] = useState<string | null>(null)
 
@@ -35,17 +45,16 @@ export const SavedColors = ({ colors, onRemoveColor }: SavedColorsProps) => {
     <div className="space-y-6">
       <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
         <h2 className="text-2xl font-bold leading-tight sm:text-3xl">
-          Saved colors
+          {translations.title}
         </h2>
         <span className="text-sm text-muted-foreground sm:text-base">
-          {colors.length} saved
+          {translations.savedCount(colors.length)}
         </span>
       </div>
 
       {colors.length === 0 ? (
         <p className="rounded-lg border border-dashed bg-muted/40 p-6 text-sm text-muted-foreground">
-          No colors saved yet. Press the spacebar or tap the color area on
-          mobile to add your favorites to the list.
+          {translations.empty}
         </p>
       ) : (
         <div className="space-y-3">
@@ -81,7 +90,7 @@ export const SavedColors = ({ colors, onRemoveColor }: SavedColorsProps) => {
                         event.stopPropagation()
                         handleExport(color)
                       }}
-                      aria-label="Download palette"
+                      aria-label={translations.downloadAria}
                     >
                       <Download className="h-4 w-4" />
                     </Button>
@@ -92,7 +101,7 @@ export const SavedColors = ({ colors, onRemoveColor }: SavedColorsProps) => {
                         event.stopPropagation()
                         onRemoveColor(color)
                       }}
-                      aria-label="Remove color"
+                      aria-label={translations.removeAria}
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -101,7 +110,10 @@ export const SavedColors = ({ colors, onRemoveColor }: SavedColorsProps) => {
 
                 {isExpanded && (
                   <div className="border-t bg-muted/40 px-4 py-4">
-                    <ColorPalette primaryColor={color} />
+                    <ColorPalette
+                      primaryColor={color}
+                      translations={paletteTranslations}
+                    />
                   </div>
                 )}
               </div>
@@ -114,6 +126,7 @@ export const SavedColors = ({ colors, onRemoveColor }: SavedColorsProps) => {
         open={Boolean(exportTarget)}
         onOpenChange={handleExportDialogChange}
         colors={exportTarget ? [exportTarget] : []}
+        translations={exportTranslations}
       />
     </div>
   )
